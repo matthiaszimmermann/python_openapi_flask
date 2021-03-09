@@ -1,0 +1,149 @@
+openapi: 3.0.1
+info:
+  description: Fruit resources Open API documentation
+  title: Static OpenAPI document of fruits resource
+  version: "1.0"
+servers:
+- description: Optional dev mode server description
+  url: http://localhost:8080/q/openapi
+paths:
+  /fruits:
+    delete:
+      description: Delete all fruits
+      operationId: fruits_delete
+      responses:
+        "200":
+          content:
+            application/json: {}
+          description: OK - all fruit resources deleted
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    get:
+      description: List all fruits
+      operationId: fruits_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Fruit'
+                type: array
+          description: OK
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    post:
+      description: Create this fruit as a resource
+      operationId: fruits_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fruit'
+      responses:
+        "200":
+          content:
+            application/json: {}
+          description: OK - new fruit resource created
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /fruits/{fruit_id}:
+    delete:
+      description: Delete the fruit with the specified id
+      operationId: fruits_fruit_id_delete
+      parameters:
+      - description: A resource identifier
+        example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+        explode: false
+        in: path
+        name: fruit_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json: {}
+          description: OK - specified fruit deleted
+        "404":
+          description: ERROR - No fruit found for the id provided
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    get:
+      description: Get a single fruit
+      operationId: fruits_fruit_id_get
+      parameters:
+      - description: A resource identifier
+        example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+        explode: false
+        in: path
+        name: fruit_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fruit'
+            text/csv:
+              schema:
+                type: object
+          description: OK
+        "404":
+          description: ERROR - No fruit found for the id provided
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+components:
+  parameters:
+    UUIDPathParam:
+      description: A resource identifier
+      example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+      explode: false
+      in: path
+      name: fruit_id
+      required: true
+      schema:
+        format: uuid
+        type: string
+      style: simple
+  schemas:
+    Fruit:
+      example:
+        name: lemon
+        description: sour, yellow
+        pick_date: 2000-01-23T04:56:07.000+00:00
+        weight: 150
+        id: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+      properties:
+        id:
+          description: Unique id of the fruit
+          example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+          format: uuid
+          title: id
+          type: string
+        name:
+          description: The name of the fruit
+          example: lemon
+          maxLength: 32
+          title: name
+          type: string
+        description:
+          description: Description for this fruit
+          example: sour, yellow
+          maxLength: 128
+          title: description
+          type: string
+        pick_date:
+          description: Date and time when the fruit has been picked
+          format: date-time
+          title: pick_date
+          type: string
+        weight:
+          description: Weight of this fruit in grams (g)
+          example: 150
+          maximum: 10000.0
+          minimum: 0.1
+          title: weight
+          type: number
+      title: Fruit

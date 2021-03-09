@@ -1,0 +1,113 @@
+
+
+openapi: 3.0.1
+info:
+  title: Static OpenAPI document of fruits resource
+  description: Fruit resources Open API documentation
+  version: "1.0"
+
+servers:
+  - url: http://localhost:8080/q/openapi
+    description: Optional dev mode server description
+
+paths:
+  /fruits:
+    get:
+      description: List all fruits
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fruit'
+    post:
+      description: Create this fruit as a resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fruit'
+      responses:
+        '200':
+          description: OK - new fruit resource created
+          content:
+            application/json: {}
+    delete:
+      description: Delete all fruits
+      responses:
+        '200':
+          description: OK - all fruit resources deleted
+          content:
+            application/json: {}
+  /fruits/{fruit_id}:
+    get:
+      description: Get a single fruit
+      parameters:
+        - $ref: '#/components/parameters/UUIDPathParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fruit'
+            text/csv:
+              schema:
+                type: object
+        '404':
+          description: ERROR - No fruit found for the id provided
+    delete:
+      description: Delete the fruit with the specified id
+      parameters:
+        - $ref: '#/components/parameters/UUIDPathParam'
+      responses:
+        '200':
+          description: OK - specified fruit deleted
+          content:
+            application/json: {}
+        '404':
+          description: ERROR - No fruit found for the id provided
+
+components:
+  parameters:
+    UUIDPathParam:
+      name: fruit_id
+      in: path
+      description: A resource identifier
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: '8dd6f91d-6378-4f52-b817-00cbc85ca39e'
+
+  schemas:
+    Fruit:
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique id of the fruit
+          example: '8dd6f91d-6378-4f52-b817-00cbc85ca39e'
+        name:
+          type: string
+          description: The name of the fruit
+          maxLength: 32
+          example: 'lemon'
+        description:
+          type: string
+          description: Description for this fruit
+          maxLength: 128
+          example: 'sour, yellow'
+        pick_date:
+          type: string
+          format: date-time
+          description: Date and time when the fruit has been picked
+        weight:
+          type: number
+          description: Weight of this fruit in grams (g)
+          minimum: 0.1
+          maximum: 10000.0
+          example: 150
