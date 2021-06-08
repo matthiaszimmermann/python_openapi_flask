@@ -15,15 +15,13 @@ class Fruit(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, name=None, description=None, pick_date=None, weight=None):  # noqa: E501
+    def __init__(self, id=None, name=None, pick_date=None, weight=None):  # noqa: E501
         """Fruit - a model defined in OpenAPI
 
         :param id: The id of this Fruit.  # noqa: E501
         :type id: str
         :param name: The name of this Fruit.  # noqa: E501
         :type name: str
-        :param description: The description of this Fruit.  # noqa: E501
-        :type description: str
         :param pick_date: The pick_date of this Fruit.  # noqa: E501
         :type pick_date: datetime
         :param weight: The weight of this Fruit.  # noqa: E501
@@ -32,7 +30,6 @@ class Fruit(Model):
         self.openapi_types = {
             'id': str,
             'name': str,
-            'description': str,
             'pick_date': datetime,
             'weight': float
         }
@@ -40,14 +37,12 @@ class Fruit(Model):
         self.attribute_map = {
             'id': 'id',
             'name': 'name',
-            'description': 'description',
             'pick_date': 'pick_date',
             'weight': 'weight'
         }
 
         self._id = id
         self._name = name
-        self._description = description
         self._pick_date = pick_date
         self._weight = weight
 
@@ -66,7 +61,7 @@ class Fruit(Model):
     def id(self):
         """Gets the id of this Fruit.
 
-        Unique id of the fruit  # noqa: E501
+        Unique ID of the fruit  # noqa: E501
 
         :return: The id of this Fruit.
         :rtype: str
@@ -77,7 +72,7 @@ class Fruit(Model):
     def id(self, id):
         """Sets the id of this Fruit.
 
-        Unique id of the fruit  # noqa: E501
+        Unique ID of the fruit  # noqa: E501
 
         :param id: The id of this Fruit.
         :type id: str
@@ -109,31 +104,6 @@ class Fruit(Model):
             raise ValueError("Invalid value for `name`, length must be less than or equal to `32`")  # noqa: E501
 
         self._name = name
-
-    @property
-    def description(self):
-        """Gets the description of this Fruit.
-
-        Description for this fruit  # noqa: E501
-
-        :return: The description of this Fruit.
-        :rtype: str
-        """
-        return self._description
-
-    @description.setter
-    def description(self, description):
-        """Sets the description of this Fruit.
-
-        Description for this fruit  # noqa: E501
-
-        :param description: The description of this Fruit.
-        :type description: str
-        """
-        if description is not None and len(description) > 128:
-            raise ValueError("Invalid value for `description`, length must be less than or equal to `128`")  # noqa: E501
-
-        self._description = description
 
     @property
     def pick_date(self):

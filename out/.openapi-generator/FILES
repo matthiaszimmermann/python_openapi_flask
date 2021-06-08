@@ -11,8 +11,11 @@ openapi_server/controllers/default_controller.py
 openapi_server/controllers/security_controller_.py
 openapi_server/encoder.py
 openapi_server/models/__init__.py
+openapi_server/models/bad_request_error.py
 openapi_server/models/base_model_.py
 openapi_server/models/fruit.py
+openapi_server/models/fruit_id.py
+openapi_server/models/not_found_error.py
 openapi_server/openapi/openapi.yaml
 openapi_server/test/__init__.py
 openapi_server/typing_utils.py

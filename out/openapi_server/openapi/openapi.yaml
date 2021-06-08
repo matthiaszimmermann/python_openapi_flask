@@ -1,14 +1,31 @@
 openapi: 3.0.1
 info:
-  description: Fruit resources Open API documentation
-  title: Static OpenAPI document of fruits resource
+  description: Fruit resources Open API documentation, based on recommendations from
+    https://florimond.dev/en/posts/2018/08/restful-api-design-13-best-practices-to-make-your-users-happy/
+  title: OpenAPI specification for managing fruits resource
   version: "1.0"
 servers:
-- description: Optional dev mode server description
-  url: http://localhost:8080/q/openapi
+- description: OpenAPI server base path
+  url: '{protocol}://{tenantId}.localhost:8080/api/{versionId}'
+  variables:
+    protocol:
+      default: http
+      enum:
+      - http
+      - https
+    tenantId:
+      default: demo
+      description: Unique tenant ID
+    versionId:
+      default: v1
+      description: API version
+      enum:
+      - v1
+      - v2
 paths:
   /fruits:
     delete:
+      deprecated: true
       description: Delete all fruits
       operationId: fruits_delete
       responses:
@@ -39,10 +56,18 @@ paths:
             schema:
               $ref: '#/components/schemas/Fruit'
       responses:
-        "200":
+        "201":
           content:
-            application/json: {}
-          description: OK - new fruit resource created
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FruitId'
+          description: Created - new fruit resource created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+          description: Object validation failed
       x-openapi-router-controller: openapi_server.controllers.default_controller
   /fruits/{fruit_id}:
     delete:
@@ -60,12 +85,16 @@ paths:
           type: string
         style: simple
       responses:
-        "200":
+        "204":
           content:
             application/json: {}
-          description: OK - specified fruit deleted
+          description: No Content - specified fruit deleted
         "404":
-          description: ERROR - No fruit found for the id provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+          description: Fruit not found
       x-openapi-router-controller: openapi_server.controllers.default_controller
     get:
       description: Get a single fruit
@@ -87,16 +116,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fruit'
-            text/csv:
-              schema:
-                type: object
           description: OK
         "404":
-          description: ERROR - No fruit found for the id provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+          description: Fruit not found
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    patch:
+      description: Update the fruit with the specified id
+      operationId: fruits_fruit_id_patch
+      parameters:
+      - description: A resource identifier
+        example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+        explode: false
+        in: path
+        name: fruit_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json: {}
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+          description: Fruit not found
       x-openapi-router-controller: openapi_server.controllers.default_controller
 components:
   parameters:
-    UUIDPathParam:
+    FruitIdParam:
       description: A resource identifier
       example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
       explode: false
@@ -111,13 +167,12 @@ components:
     Fruit:
       example:
         name: lemon
-        description: sour, yellow
         pick_date: 2000-01-23T04:56:07.000+00:00
         weight: 150
         id: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
       properties:
         id:
-          description: Unique id of the fruit
+          description: Unique ID of the fruit
           example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
           format: uuid
           title: id
@@ -127,12 +182,6 @@ components:
           example: lemon
           maxLength: 32
           title: name
-          type: string
-        description:
-          description: Description for this fruit
-          example: sour, yellow
-          maxLength: 128
-          title: description
           type: string
         pick_date:
           description: Date and time when the fruit has been picked
@@ -147,3 +196,35 @@ components:
           title: weight
           type: number
       title: Fruit
+    FruitId:
+      example:
+        id: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+      properties:
+        id:
+          description: Unique ID of the fruit
+          example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+          format: uuid
+          title: id
+          type: string
+      title: FruitId
+    BadRequestError:
+      properties:
+        message:
+          description: Human readable error message
+          example: When posting fruits no ID attribute must be provided
+          title: message
+          type: string
+      title: BadRequestError
+    NotFoundError:
+      properties:
+        id:
+          description: The query ID
+          example: 8dd6f91d-6378-4f52-b817-00cbc85ca39e
+          title: id
+          type: string
+        message:
+          description: Human readable error message
+          example: No resource for the provided ID found
+          title: message
+          type: string
+      title: NotFoundError

@@ -22,10 +22,10 @@ REQUIRES = [
 setup(
     name=NAME,
     version=VERSION,
-    description="Static OpenAPI document of fruits resource",
+    description="OpenAPI specification for managing fruits resource",
     author_email="",
     url="",
-    keywords=["OpenAPI", "Static OpenAPI document of fruits resource"],
+    keywords=["OpenAPI", "OpenAPI specification for managing fruits resource"],
     install_requires=REQUIRES,
     packages=find_packages(),
     package_data={'': ['openapi/openapi.yaml']},
@@ -33,7 +33,7 @@ setup(
     entry_points={
         'console_scripts': ['openapi_server=openapi_server.__main__:main']},
     long_description="""\
-    Fruit resources Open API documentation
+    Fruit resources Open API documentation, based on recommendations from https://florimond.dev/en/posts/2018/08/restful-api-design-13-best-practices-to-make-your-users-happy/
     """
 )
 

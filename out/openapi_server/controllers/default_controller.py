@@ -1,11 +1,12 @@
 import connexion
 import six
-import uuid
 
+from openapi_server.models.bad_request_error import BadRequestError  # noqa: E501
 from openapi_server.models.fruit import Fruit  # noqa: E501
+from openapi_server.models.fruit_id import FruitId  # noqa: E501
+from openapi_server.models.not_found_error import NotFoundError  # noqa: E501
 from openapi_server import util
 
-fruit_basket = {}
 
 def fruits_delete():  # noqa: E501
     """fruits_delete
@@ -15,10 +16,7 @@ def fruits_delete():  # noqa: E501
 
     :rtype: None
     """
-
-    fruit_basket = {}
-
-    return None, 200
+    return 'do some magic!'
 
 
 def fruits_fruit_id_delete(fruit_id):  # noqa: E501
@@ -26,36 +24,38 @@ def fruits_fruit_id_delete(fruit_id):  # noqa: E501
 
     Delete the fruit with the specified id # noqa: E501
 
-    :param id: A resource identifier
-    :type id: 
+    :param fruit_id: A resource identifier
+    :type fruit_id: 
 
     :rtype: None
     """
-    try:
-        fruit_basket.pop(fruit_id, None)
-        response = fruit_id, 200
-    except KeyError:
-        response = {}, 404
+    return 'do some magic!'
 
-    return response
 
 def fruits_fruit_id_get(fruit_id):  # noqa: E501
     """fruits_fruit_id_get
 
     Get a single fruit # noqa: E501
 
-    :param id: A resource identifier
-    :type id: 
+    :param fruit_id: A resource identifier
+    :type fruit_id: 
 
     :rtype: Fruit
     """
-    try:
-        fruit = fruit_basket[fruit_id]
-        response = fruit, 200
-    except KeyError:
-        response = {}, 404
+    return 'do some magic!'
 
-    return response
+
+def fruits_fruit_id_patch(fruit_id):  # noqa: E501
+    """fruits_fruit_id_patch
+
+    Update the fruit with the specified id # noqa: E501
+
+    :param fruit_id: A resource identifier
+    :type fruit_id: 
+
+    :rtype: None
+    """
+    return 'do some magic!'
 
 
 def fruits_get():  # noqa: E501
@@ -66,8 +66,44 @@ def fruits_get():  # noqa: E501
 
     :rtype: List[Fruit]
     """
-    return list(fruit_basket.values())
+    
+    for item in connexion.request.__dict__.items():
+        print(item)
 
+    host = get_host(connexion.request)
+    tenant = get_tenant(connexion.request)
+    version = get_version(connexion.request)
+
+    print("host: {}, tenant: {}, version: {}".format(host, tenant, version))
+    
+    return 'do some magic!'
+
+def get_version(request):
+    rd = request.__dict__
+    
+    if 'path' in rd.keys():
+        path = rd['path']
+
+        if path.startswith('/api/v'):
+            return path.split('/')[2]
+        
+    return None
+
+def get_tenant(request):
+    host = get_host(request)
+
+    if host and '.' in host:
+        return host.split('.')[0]
+    
+    return None
+
+def get_host(request):
+    rd = request.__dict__
+    
+    if 'host' in rd.keys():
+        return rd['host']
+    
+    return None
 
 def fruits_post(fruit=None):  # noqa: E501
     """fruits_post
@@ -77,16 +113,8 @@ def fruits_post(fruit=None):  # noqa: E501
     :param fruit: 
     :type fruit: dict | bytes
 
-    :rtype: None
+    :rtype: FruitId
     """
     if connexion.request.is_json:
         fruit = Fruit.from_dict(connexion.request.get_json())  # noqa: E501
-        id = fruit.id
-
-        if(id is None or len(id) == 0):
-            id = str(uuid.uuid4())
-            fruit.id = id
-
-        fruit_basket[id] = fruit
-    
-    return fruit, 200
+    return 'do some magic!'
